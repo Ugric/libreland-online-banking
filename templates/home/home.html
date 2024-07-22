@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block head %}
+    <script>
+        const audio = new Audio("/music/bank theme.mp3");
+        audio.volume = 0.01;
+        audio.loop = true;
+        audio.autoPlay = true;
+        Object
+            .keys(window)
+            .forEach(key => {
+                if (/^on/.test(key)) {
+                    window.addEventListener(key.slice(2), async () => {
+                        try {
+                            await audio.play();
+                        } catch (_) {}
+                    });
+                }
+            });
+    </script>
+{% endblock %}
+{% block content %}
+    <img src="/logo.svg" style="margin:auto;width:100%;max-width:750px;display:block;">
+    <div style="margin-top: 2rem;text-align:center;">
+        <p style="font-size: 30px;">Welcome to the Sovereign Bank of Libreland, your trusted financial partner in the vibrant world of Libreland. As the only bank on the server, we are dedicated to providing you with top-notch financial services tailored to meet the needs of our unique community. Our mission is to support your financial growth and success with integrity, innovation, and unwavering commitment.</p>
+    </div>
+    <div style="text-align:center;">
+        <h1 style="color:var(--primary);">Our Services</h1>
+        <div class="key_features">
+            <div>
+                <div>
+                    <i style="font-size:100px;" class="fa-solid fa-wallet"></i>
+                    <h1>Current Accounts</h1>
+                    <p style="font-size:20px">Our bank is built on a foundation of financial stability and security. With robust resources and careful management, we ensure that your investments are safe and your financial growth is supported. Trust in our strength to safeguard your assets and help you achieve your financial goals.</p>
+                </div>
+            </div>
+            <div>
+                <div>
+                    <i style="font-size:100px;" class="fa-solid fa-piggy-bank"></i>
+                    <h1>Individual Savings Accounts (ISAs)</h1>
+                    <p style="font-size:20px">As the exclusive bank on the server, the Sovereign Bank of Libreland offers unparalleled services tailored to our unique community. Enjoy the convenience and reliability of banking with the sole financial institution dedicated to serving Libreland.</p>
+                </div>
+            </div>
+            <div>
+                <div>
+                    <i style="font-size:100px;" class="fa-solid fa-sack-dollar"></i>
+                    <h1>Loans</h1>
+                    <p style="font-size:20px">We prioritize the needs of our community, offering personalized services and incentives to help you succeed. Whether you are embarking on new projects or expanding your ventures, our commitment is to support the growth and prosperity of every player in Libreland.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="text-align:center; margin-top:5rem;">
+        <h1 style="color:var(--primary);">Why Go With Us?</h1>
+        <div class="key_features">
+            <div>
+                <div>
+                    <i style="font-size:100px;" class="fa fa-university"></i>
+                    <h1>Financial Strength</h1>
+                    <p style="font-size:20px">Our bank is built on a foundation of financial stability and security. With robust resources and careful management, we ensure that your investments are safe and your financial growth is supported. Trust in our strength to safeguard your assets and help you achieve your financial goals.</p>
+                </div>
+            </div>
+            <div>
+                <div>
+                    <i style="font-size:100px;" class="fa fa-sad-tear"></i>
+                    <h1>Your Only Option</h1>
+                    <p style="font-size:20px">As the exclusive bank on the server, the Sovereign Bank of Libreland offers unparalleled services tailored to our unique community. Enjoy the convenience and reliability of banking with the sole financial institution dedicated to serving Libreland.</p>
+                </div>
+            </div>
+            <div>
+                <div>
+                    <i style="font-size:100px;" class="fa fa-users"></i>
+                    <h1>Community Focus</h1>
+                    <p style="font-size:20px">We prioritize the needs of our community, offering personalized services and incentives to help you succeed. Whether you are embarking on new projects or expanding your ventures, our commitment is to support the growth and prosperity of every player in Libreland.</p>
+                </div>
+            </div>
+            <div>
+                <div>
+                    <i style="font-size:100px;" class="fa-solid fa-lightbulb"></i>
+                    <h1>Innovative Solutions</h1>
+                    <p style="font-size:20px">We provide cutting-edge financial solutions and incentives to help you make the most of your resources. From competitive loan rates to exclusive bonuses, our innovative offerings are designed to empower you and enhance your Minecraft experience.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="text-align:center; margin-top:5rem;">
+        <h1 style="color:var(--primary);">Join Us</h1>
+        <p style="font-size: 30px;">Join the Sovereign Bank of Libreland and become part of a financial institution that truly cares about your success. Together, we can build a prosperous future and make Libreland a thriving community for all.
+            <br><br>
+            Thank you for choosing the Sovereign Bank of Libreland – where your financial strength is our priority.</p>
+    </div>
+{% endblock %}

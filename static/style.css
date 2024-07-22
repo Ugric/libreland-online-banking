@@ -1,0 +1,426 @@
+:root {
+    --text: #d1d8fc;
+    --background: #01030c;
+    --primary: #869cf7;
+    --secondary: #cc2229;
+    --accent: #505e86;
+    --transparent: #01030cbf;
+    --navbar-height: 50px;
+}
+
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 80px;
+}
+
+body {
+    font-family: 'Arial';
+    font-size: 16px;
+    line-height: 1.5;
+    margin: 0;
+    padding: 0;
+    color: var(--text);
+    background-color: var(--background);
+    margin-bottom: 2rem;
+}
+
+a {
+    color: var(--primary);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: 'Arial';
+    font-weight: 700;
+    margin: 0;
+    padding: 0;
+    word-break: break-word;
+}
+
+.content {
+  max-width:2000px;
+  margin:0 auto;
+  padding:0 1rem 1rem
+}
+
+.navbar {
+    overflow: hidden;
+    position: sticky;
+    top: 0;
+    background-color: var(--transparent);
+    backdrop-filter: blur(50px);
+    height: var(--navbar-height);
+    padding: 0.5rem 1rem;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1;
+}
+
+.navbar li {
+    display: flex;
+    list-style: none;
+}
+
+.navbar a {
+    text-decoration: none;
+}
+
+.navbar .links a {
+    font-family: 'Arial';
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-left: 1rem;
+}
+
+.navbar .links {
+    overflow: auto;
+}
+
+.navbar .links a:hover {
+    color: var(--primary);
+}
+
+.logo {
+    text-wrap: nowrap;
+    font-size: 2.5rem;
+    font-weight: 700;
+    border-radius: 10px;
+    padding: 0.5rem;
+    background: linear-gradient(120deg, var(--primary), var(--accent));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: var(--accent);
+    font-family: 'Arial';
+    text-decoration: none;
+}
+
+.logo::before {
+    content: "The Sovereign Bank of Libreland";
+}
+
+.welcome {
+    display: flex;
+    background-image: url("/1706110852106.jpg");
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    width: 100%;
+    height: calc(100vh - (var(--navbar-height)) - 1rem);
+    flex-direction: column;
+    justify-content: center;
+    
+}
+
+.welcome > div {
+    background-color: var(--transparent);
+    width: fit-content;
+    margin: auto;
+    border-radius: 25px;
+    backdrop-filter: blur(10px);
+}
+
+.welcome > div > h1 {
+    background: linear-gradient(120deg, var(--primary), var(--accent));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-align:center;
+    margin: 1rem;
+    font-size: 7rem;
+    font-weight: 900;
+}
+
+@media (max-width: 1250px) {
+    .welcome > div > h1 {
+        font-size: 5rem;
+    }
+}
+
+textarea:focus,
+input:focus {
+    outline: none;
+}
+
+.search {
+    display: flex;
+    flex-direction: row;
+    margin: 2.5rem 0;
+    justify-content: center;
+}
+
+.search .bar {
+    width: 500px;
+    height: 50px;
+    border-radius: 25px;
+    color: var(--text);
+    background-color: var(--secondary);
+    border: 1px solid var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1rem;
+}
+
+.search .button {
+    width: 100px;
+    border-radius: 25px;
+    margin-left: 1rem;
+    color: var(--text);
+    background-color: var(--primary);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.results {
+    display: flex;
+    flex-direction: column;
+    margin: 1rem;
+    align-items: stretch;
+}
+
+.results a {
+    text-decoration: none;
+    color: var(--text);
+    margin: 0.5rem 0;
+    padding: 1rem;
+    border-radius: 10px;
+    background-color: var(--secondary);
+    border: 1px solid var(--primary);
+}
+
+.selected {
+    color: var(--accent) !important;
+}
+
+
+.md_pre {
+    background-color: var(--secondary);
+    border-radius: 10px;
+    padding: 1rem;
+    border: 1px solid var(--primary);
+    overflow-x: auto;
+}
+
+.copyable-pre {
+    background-color: var(--secondary);
+    border-radius: 10px;
+    padding: 1rem;
+    border: 1px solid var(--primary);
+    overflow-x: auto;
+    cursor: pointer;
+    /* disable text highlighting */
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    white-space: -moz-pre-wrap;
+    white-space: -o-pre-wrap;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.form {
+    width: 100%;
+    max-width: 500px;
+    margin: auto;
+    text-align: center;
+}
+
+.form .input {
+    width: 100%;
+    height: 50px;
+    margin: 1rem 0;
+    box-sizing: border-box;
+    border-radius: 25px;
+    color: var(--text);
+    background-color: var(--background);
+    border: 2px solid var(--secondary);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1rem;
+    font-family: 'Arial';
+}
+
+.form .submit {
+    border-radius: 25px;
+    margin: auto;
+    font-size: 1.5rem;
+    color: var(--background);
+    background-color: var(--primary);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 1rem 3rem;
+    min-width: 100px;
+    font-family: 'Arial';
+}
+
+.error {
+    color: red;
+    font-size: 0.8rem;
+    margin: 0.5rem 0;
+}
+
+.split {
+    display: block;
+    margin: 1rem 0;
+    width: 100%;
+    height: 1px;
+    background-color:var(--accent);
+}
+
+.atributes div>* {
+    margin: 0;
+}
+
+.atributes div {
+    margin: 1rem 0;
+}
+
+.package {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: stretch;
+    justify-content: center;
+    align-items: stretch;
+}
+
+.package .info {
+    width: 100%;
+}
+
+.package .versions {
+    margin: 0 1rem;
+    width: 100%;
+    max-width: 250px;
+}
+
+@media (max-width: 750px) {
+    .package .versions {
+        margin: 1rem 0;
+        max-width: 100%;
+    }
+
+    .package {
+        flex-direction: column;
+    }
+}
+
+
+.key_features {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: stretch;
+    flex-wrap: wrap;
+}
+
+.key_features > div {
+    width: 250px;
+    text-align: center;
+    background: var(--primary);
+    background: linear-gradient(145deg, var(--primary) 0%, var(--accent) 100%);
+    color: var(--background);
+    border-radius: 50px;
+    margin: 1rem;
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: stretch;
+    justify-content: space-between;
+}
+
+.key_features > div img {
+    border-radius: 15px;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--primary);
+  border-radius: 20px;
+}
+
+.link_button {
+    text-decoration: none;
+    color: var(--background);
+    margin: .5rem 0;
+    padding: 1rem;
+    border-radius: 10px;
+    font-size: 20px;
+    background-color: var(--primary);
+}
+
+.accounts {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: stretch;
+    flex-wrap: wrap;
+}
+
+.accounts > a {
+    text-decoration: none;
+    width: 250px;
+    text-align: center;
+    background: var(--background);
+    border: 5px dotted var(--secondary);
+    color: var(--text);
+    border-radius: 50px;
+    margin: 1rem;
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: stretch;
+    justify-content: space-between;
+}
+
+.transactions {
+    max-width: 750px;
+    margin: 1rem auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex-wrap: nowrap;
+    align-items: stretch;
+}
+
+.transactions > div {
+    text-align: center;
+    background: var(--background);
+    border: 3px dotted var(--secondary);
+    color: var(--text);
+    border-radius: 50px;
+    margin: 0.5rem 0;
+    padding: 1rem;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
+}

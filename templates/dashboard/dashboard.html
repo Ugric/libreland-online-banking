@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+        <h1 style="text-align:center;">My Dashboard</h1>
+        <div class="split"></div>
+        <div>
+            <h1>Hi, {{user[1]}}.</h1>
+            <div class="accounts">
+            {% for account in accounts %}
+                <a href="/dashboard/{{account.id}}">
+                    <h1 style="text-decoration: underline;">{{account.name}}</h1>
+                    <h2>{{account.balance}}₾</h2>
+                </a>
+            {% endfor %}
+            </div>
+        </div>
+{% endblock %}

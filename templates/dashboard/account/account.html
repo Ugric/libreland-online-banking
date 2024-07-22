@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}account{% endblock %}
+{% block content %}
+    <h1 style="text-align:center;">{{account.name}}</h1>
+    <div class="split"></div>
+    <div>
+        <h1 style="text-align:center;">balance:
+            {{account.balance}}₾</h1>
+        <a class="link_button" href="/dashboard/{account.id}/pay-someone" style="
+            text-align: center;
+            margin: 1rem auto;
+            width: 150px;
+            display: block;
+        ">Pay Someone</a>
+        <h2 style="text-align:center;">transactions</h2>
+        <div class="transactions">
+            {% for transaction in transactions %}
+                <div>
+                    <h3>{{transaction.date}}</h3>
+                    <h2 style="word-break: keep-all;{% if transaction.amount > 0 %}color: #5eff5e;{% elif transaction.amount < 0 %}color: #ff5e5e;{% endif %}">
+                        {% if transaction.amount > 0 %}+{% endif %}{{transaction.amount}}₾</h2>
+                </div>
+            {% endfor %}
+        </div>
+    {% endblock %}
