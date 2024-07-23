@@ -1,25 +1,37 @@
 {% extends "base.html" %}
-{% block title %}account{% endblock %}
+{% block title %}Account{% endblock %}
 {% block content %}
     <h1 style="text-align:center;">{{account.name}}</h1>
     <div class="split"></div>
     <div>
-        <h1 style="text-align:center;">balance:
-            {{account.balance}}₾</h1>
-        <a class="link_button" href="/dashboard/{account.id}/pay-someone" style="
-            text-align: center;
-            margin: 1rem auto;
-            width: 150px;
-            display: block;
-        ">Pay Someone</a>
+        <h1 style="text-align:center;">Account Number:
+            {{account.id}}</h1>
+        <h2 style="text-align:center;">Balance:
+            <span style="word-break: keep-all;{% if account.balance > 0 %}color: var(--green);{% elif account.balance < 0 %}color: var(--red);{% endif %}">
+                {{account.balance | cents_to_libros}}</span></h2>
+        <h3 style="text-align:center;">Interest Rate:
+            <span style="color: var(--green);">{{interest.rate*100}}%</span>
+            (per IRL week)</h3>
+        <h3 style="text-align:center;">Interest Accumulated:
+            <span style="word-break: keep-all;{% if interest.accumulated > 0 %}color: var(--green);{% elif interest.accumulated < 0 %}color: var(--red);{% endif %}">
+                {{interest.accumulated|cents_to_libros}}</span></h3>
+        {% if account.type != 1 %}
+            <a class="link_button" href="/dashboard/{{account.id}}/pay-someone" style="
+                text-align: center;
+                margin: 1rem auto;
+                width: 150px;
+                display: block;
+            ">Pay Someone</a>
+        {% endif %}
         <h2 style="text-align:center;">transactions</h2>
         <div class="transactions">
             {% for transaction in transactions %}
                 <div>
                     <h3>{{transaction.date}}</h3>
-                    <h2 style="word-break: keep-all;{% if transaction.amount > 0 %}color: #5eff5e;{% elif transaction.amount < 0 %}color: #ff5e5e;{% endif %}">
-                        {% if transaction.amount > 0 %}+{% endif %}{{transaction.amount}}₾</h2>
+                    <h2 style="word-break: keep-all;{% if transaction.amount > 0 %}color: var(--green);{% elif transaction.amount < 0 %}color: var(--red);{% endif %}">
+                        {% if transaction.amount > 0 %}+{% endif %}{{transaction.amount|cents_to_libros}}</h2>
                 </div>
             {% endfor %}
         </div>
-    {% endblock %}
+    </div>
+{% endblock %}

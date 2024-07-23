@@ -5,6 +5,8 @@
     --secondary: #cc2229;
     --accent: #505e86;
     --transparent: #01030cbf;
+    --green: #5eff5e;
+    --red: #ff5e5e;
     --navbar-height: 50px;
 }
 
@@ -236,12 +238,10 @@ input:focus {
     width: 100%;
     max-width: 500px;
     margin: auto;
-    text-align: center;
 }
 
 .form .input {
     width: 100%;
-    height: 50px;
     margin: 1rem 0;
     box-sizing: border-box;
     border-radius: 25px;
@@ -268,6 +268,21 @@ input:focus {
     cursor: pointer;
     padding: 1rem 3rem;
     min-width: 100px;
+    font-family: 'Arial';
+}
+
+.form .container {
+    width: 100%;
+    margin: 1rem 0;
+    box-sizing: border-box;
+    border-radius: 25px;
+    color: var(--text);
+    background-color: var(--background);
+    border: 2px solid var(--secondary);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1rem;
     font-family: 'Arial';
 }
 

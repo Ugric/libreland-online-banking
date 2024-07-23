@@ -1,4 +1,4 @@
-from flask import render_template, Blueprint, request, redirect, Response
+from flask import render_template, Blueprint, request, redirect
 from database import db
 from .account.account import account_page
 

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Pay Someone{% endblock %}
+{% block content %}
+    <h1 style="text-align:center;">Pay Someone</h1>
+    <div class="split"></div>
+    <h2 style="text-align:center;">{{account.name}}</h2>
+    <h3 style="text-align:center;">Balance:
+        {{account.balance | cents_to_libros}}</h3>
+    <form class="form" action="/dashboard/{{account.id}}/pay-someone" method="post">
+        <div class="container">
+            <input type="number" id="amount" name="amount" value="0.00" onchange="
+        if (event.target.valueAsNumber>{{account.balance/100}}) {
+            event.target.valueAsNumber={{account.balance/100}};
+        } else if (event.target.valueAsNumber < 0) {
+            event.target.valueAsNumber=0;
+        };
+        event.target.value = isNaN(event.target.valueAsNumber)?'0.00':event.target.valueAsNumber.toFixed(2);
+        " step="0.01" min="0.00" max="{{account.balance/100}}" required="required" style="
+        width: 100%;
+    background-color: transparent;
+    color: white;
+    font-size:3rem;
+    border: none;
+">
+            <span style="font-size:3rem;">₾</span>
+        </div>
+        <select name="recipient" id="recipient" required="required" class="input" style="font-size: 1.5rem;">
+            <option value="" disabled selected>Select recipient</option>
+            {% for recipient in recipients %}
+                <option value="{{recipient.id}}">{{recipient.name}}</option>
+            {% endfor %}
+        </select>
+        <input type="text" name="reference" placeholder="Reference (leave empty for default)" class="input" style="font-size: 1.5rem;">
+        <button type="submit" class="submit">Send</button>
+        {% if error %}
+            <p style="color:red;text-align:center;">{{error}}</p>
+        {% endif %}
+    </form>
+{% endblock %}

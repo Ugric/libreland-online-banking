@@ -1,5 +1,6 @@
-from flask import render_template, Blueprint, request, redirect, Response
+from flask import render_template, Blueprint, request, redirect
 from database import db
+from .pay_someone.pay_someone import pay_someone_page
 
 account_page = Blueprint('account', __name__)
 
@@ -19,8 +20,16 @@ def account(account_id):
             'date': transation[3],
         }
         for transation in db.get_transactions(account_id)]
-    return render_template('dashboard/account/account.html', user=user, account={
+    intrest_rate = account[5]
+    intrest_accumulated = int(db.get_interest_accumulated(account_id))
+    return render_template('dashboard/account/account.html', user=user, interest={
+        'rate': intrest_rate,
+        'accumulated': intrest_accumulated
+    }, account={
         'id': account[0],
+        'type': account[1],
         'name': account[2],
         'balance': balance
     }, transactions=reversed(transactions))
+
+account_page.register_blueprint(pay_someone_page)

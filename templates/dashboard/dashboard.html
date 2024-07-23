@@ -9,7 +9,7 @@
             {% for account in accounts %}
                 <a href="/dashboard/{{account.id}}">
                     <h1 style="text-decoration: underline;">{{account.name}}</h1>
-                    <h2>{{account.balance}}₾</h2>
+                    <h2 style="word-break: keep-all;{% if account.balance > 0 %}color: var(--green);{% elif account.balance < 0 %}color: var(--red);{% endif %}">{{account.balance|cents_to_libros}}</h2>
                 </a>
             {% endfor %}
             </div>
