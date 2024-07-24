@@ -3,11 +3,13 @@ from database import db
 
 login_page = Blueprint('login', __name__, url_prefix='/login')
 
+@login_page.before_request
+def check_login():
+    if request.user:
+        return redirect('/dashboard')
+
 @login_page.route('/')
 def login():
-    user = db.get_user_by_token(request.cookies.get('token'))
-    if user:
-        return redirect('/dashboard')
     return render_template('login/login.html')
 
 @login_page.route('/', methods=['POST'])

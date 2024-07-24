@@ -15,6 +15,8 @@ accountPINS.addHandler(fh)
 
 seconds_in_week = 7*24*60*60
 
+token_cache = {}
+
 def random_string(length):
     return ''.join(random.choices('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', k=length))
 
@@ -167,6 +169,7 @@ class Database:
         for account in accounts:
             try:
                 self.give_interest(account[0])
+                self.commit()
             except Exception as e:
                 print(e)
                 self.conn.rollback()
@@ -237,12 +240,12 @@ class Database:
         cursor.close()
         return fetched
     
-    def insert_account(self, user_id, type, name):
+    def insert_account(self, user_id, type, name, interest_rate):
         cursor = self.conn.cursor()
         account_id = generate_Digits(8)
         cursor.execute('''
-            INSERT INTO accounts (id, type, name, user_id) VALUES (?, ?, ?, ?)
-        ''', (account_id, type, name, user_id))
+            INSERT INTO accounts (id, type, name, user_id, interest_rate) VALUES (?, ?, ?, ?, ?)
+        ''', (account_id, type, name, user_id, interest_rate))
         return account_id
     
     def get_transactions(self, account_id):
@@ -281,14 +284,19 @@ class Database:
         cursor.execute('''
             INSERT INTO tokens (id, user_id) VALUES (?, ?)
         ''', (token, user_id))
+        token_cache[token] = (token, user_id)
         return token
 
     def get_token(self, token):
+        if token in token_cache:
+            return token_cache[token]
         cursor = self.conn.cursor()
         cursor.execute('''
             SELECT * FROM tokens WHERE id = ?
         ''', (token,))
         fetched = cursor.fetchone()
+        if fetched:
+            token_cache[token] = fetched
         cursor.close()
         return fetched
     
@@ -297,6 +305,7 @@ class Database:
         cursor.execute('''
             DELETE FROM tokens WHERE id = ?
         ''', (token,))
+        del token_cache[token]
         cursor.close()
 
     def get_user_by_token(self, token):
@@ -325,7 +334,6 @@ class Database:
             balance = self.get_balance(from_account_id)
             if balance < amount:
                 return 2
-            from_account = self.get_account(from_account_id)
             to_account = self.get_account(to_account_id)
             if not to_account:
                 return 3
@@ -396,7 +404,7 @@ users = [
             {
                 'type': 0,
                 'name': 'Current',
-                'initial': 1e6,
+                'initial': 36,
             },
             {
                 'type': 1,
@@ -525,6 +533,6 @@ for user in users:
     if not user_id:
         continue
     for account in user.get('accounts', []):
-        account_id = db.insert_account(user_id, account['type'], account['name'])
+        account_id = db.insert_account(user_id, account['type'], account['name'], account.get('interest', 0.05))
         db.insert_transaction(account_id, account['initial']*100, 'Initial balance')
 db.commit()

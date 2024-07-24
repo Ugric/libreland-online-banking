@@ -4,7 +4,9 @@
     </a>
     <div class="links">
         {% if user %}
+        {% if user[4] %}
             <a href="/admin">Admin</a>
+        {% endif %}
             <a href="/dashboard">Dashboard</a>
             <a href="/logout">Logout</a>
         {% else %}

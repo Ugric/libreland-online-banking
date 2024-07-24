@@ -7,14 +7,17 @@
         <h1 style="text-align:center;">Account Number:
             {{account.id}}</h1>
         <h2 style="text-align:center;">Balance:
-            <span style="word-break: keep-all;{% if account.balance > 0 %}color: var(--green);{% elif account.balance < 0 %}color: var(--red);{% endif %}">
+            <span style="word-break: keep-all;{% if account.balance >= 0 %}color: var(--green);{% elif account.balance < 0 %}color: var(--red);{% endif %}">
                 {{account.balance | cents_to_libros}}</span></h2>
         <h3 style="text-align:center;">Interest Rate:
             <span style="color: var(--green);">{{interest.rate*100}}%</span>
             (per IRL week)</h3>
         <h3 style="text-align:center;">Interest Accumulated:
-            <span style="word-break: keep-all;{% if interest.accumulated > 0 %}color: var(--green);{% elif interest.accumulated < 0 %}color: var(--red);{% endif %}">
+            <span style="word-break: keep-all;{% if interest.accumulated >= 0 %}color: var(--green);{% elif interest.accumulated < 0 %}color: var(--red);{% endif %}">
                 {{interest.accumulated|cents_to_libros}}</span></h3>
+        <h3 style="text-align:center;">Today's Interest:
+            <span style="word-break: keep-all;{% if interest.accumulated >= 0 %}color: var(--green);{% elif interest.accumulated < 0 %}color: var(--red);{% endif %}">
+                {{interest.since_last|cents_to_libros_4dp}}</span></h3>
         {% if account.type != 1 %}
             <a class="link_button" href="/dashboard/{{account.id}}/pay-someone" style="
                 text-align: center;
