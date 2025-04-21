@@ -3,6 +3,6 @@ services:
   app:
     image: bankingsystem
     ports:
-      - 80:5000
+      - 6040:5000
     volumes:
       - ./data:/app/data:Z
