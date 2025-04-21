@@ -2,6 +2,8 @@ version: '3'
 services:
   app:
     image: bankingsystem
+    environment:
+      - proxy_layers=0
     ports:
       - 6040:5000
     volumes:

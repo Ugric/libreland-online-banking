@@ -10,6 +10,8 @@ import logging
 import threading
 import time
 import datetime
+from werkzeug.middleware.proxy_fix import ProxyFix
+
 
 def interesting_thread():
     while True:
@@ -38,6 +40,10 @@ def cents_to_libros_4dp(cents):
     return "{0:,.4f}₾".format(libros)
 
 app = Flask(__name__, static_folder='static', static_url_path='')
+
+proxy_layers = int(os.environ.get("proxy_layers", 0))
+
+ProxyFix(app.wsgi_app, x_proto=proxy_layers, x_host=proxy_layers)
 
 app.jinja_env.filters['cents_to_libros'] = cents_to_libros
 app.jinja_env.filters['cents_to_libros_4dp'] = cents_to_libros_4dp
