@@ -4,7 +4,7 @@ from .pay_someone.pay_someone import pay_someone_page
 
 account_page = Blueprint('account', __name__)
 
-@account_page.route('/<path:account_id>/')
+@account_page.route('/<string:account_id>/')
 def account(account_id):
     user = db.get_user_by_token(request.cookies.get('token'))
     if not user:

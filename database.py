@@ -13,7 +13,7 @@ fh = logging.FileHandler('data/accountPINS.log')
 fh.setLevel(logging.DEBUG)
 accountPINS.addHandler(fh)
 
-seconds_in_week = 7*24*60*60
+seconds_in_day = 24*60*60
 
 token_cache = {}
 
@@ -76,6 +76,7 @@ class Database:
         cursor.close()
 
     def insert_user(self, name, PIN=None, hidden=False, admin=False):
+        print(hidden)
         cursor = self.conn.cursor()
         if not PIN:
             PIN = generate_Digits(6)
@@ -114,11 +115,11 @@ class Database:
             SELECT * FROM transactions WHERE account_id = ? AND created >= ?
         ''', (account_id,last_interest))
         transactions = cursor.fetchall()
-        interest = (self.get_balance(account_id, last_interest) * account[5]*((time_now - last_interest).total_seconds()/seconds_in_week)) + account[7]
+        interest = (self.get_balance(account_id, last_interest) * account[5]*((time_now - last_interest).total_seconds()/seconds_in_day)) + account[7]
         for transaction in transactions:
             transaction_date = datetime.datetime.fromisoformat(transaction[4])
             time_to_interest = time_now - transaction_date
-            interest += transaction[2] * account[5] * (time_to_interest.total_seconds() / seconds_in_week)
+            interest += transaction[2] * account[5] * (time_to_interest.total_seconds() / seconds_in_day)
         cursor.close()
         return interest
     
@@ -138,7 +139,7 @@ class Database:
         for transaction in transactions:
             transaction_date = datetime.datetime.fromisoformat(transaction[4])
             time_to_interest = time_now - transaction_date
-            interest += transaction[2] * account[5] * (time_to_interest.total_seconds() / seconds_in_week)
+            interest += transaction[2] * account[5] * (time_to_interest.total_seconds() / seconds_in_day)
         cursor.close()
         return interest
     
@@ -247,6 +248,14 @@ class Database:
             INSERT INTO accounts (id, type, name, user_id, interest_rate) VALUES (?, ?, ?, ?, ?)
         ''', (account_id, type, name, user_id, interest_rate))
         return account_id
+    
+    def change_interest(self, account_id, new_interest):
+        cursor = self.conn.cursor()
+        self.give_interest(account_id)
+        cursor.execute('''
+            UPDATE accounts SET interest_rate = ? WHERE id = ?
+        ''', (new_interest, account_id))
+        cursor.close()
     
     def get_transactions(self, account_id):
         cursor = self.conn.cursor()
@@ -386,140 +395,15 @@ users = [
             {
                 'type': 2,
                 'name': 'Reserve',
-                'initial': 286,
+                'initial': 0,
                 'interest': 0,
             },
             {
                 'type': 2,
                 'name': 'Bonus',
-                'initial': 10,
+                'initial': 0,
                 'interest': 0,
             }
-        ]
-    },
-    {
-        'name': 'Ugric',
-        'admin': True,
-        'accounts': [
-            {
-                'type': 0,
-                'name': 'Current',
-                'initial': 36,
-            },
-            {
-                'type': 1,
-                'name': 'ISA',
-                'initial': 0,
-                'interest': 0.1,
-            },
-        ]
-    },
-    {
-        'name': 'Mjreacts_YT',
-        'accounts': [
-            {
-                'type': 0,
-                'name': 'Current',
-                'initial': 159,
-            },
-            {
-                'type': 1,
-                'name': 'ISA',
-                'initial': 0,
-                'interest': 0.1,
-            },
-        ]
-    },
-    {
-        'name': 'Yellowgem11',
-        'accounts': [
-            {
-                'type': 0,
-                'name': 'Current',
-                'initial': 36,
-            },
-            {
-                'type': 1,
-                'name': 'ISA',
-                'initial': 228,
-                'interest': 0,
-            },
-        ]
-    },
-    {
-        'name': 'Az3rt_',
-        'accounts': [
-            {
-                'type': 0,
-                'name': 'Current',
-                'initial': 819,
-            },
-            {
-                'type': 1,
-                'name': 'ISA',
-                'initial': 0,
-                'interest': 0.1,
-            },
-        ]
-    },
-    {
-        'name': 'Sami2048',
-        'accounts': [
-            {
-                'type': 0,
-                'name': 'Current',
-                'initial': 105,
-            },
-            {
-                'type': 1,
-                'name': 'ISA',
-                'initial': 0,
-                'interest': 0.1,
-            },
-        ]
-    },
-    {
-        'name': 'fairwillp',
-        'accounts': [
-            {
-                'type': 0,
-                'name': 'Current',
-                'initial': 563,
-            },
-            {
-                'type': 1,
-                'name': 'ISA',
-                'initial': 0,
-                'interest': 0.1,
-            },
-        ]
-    },
-    {
-        'name': 'John Doe',
-        'hidden': True,
-        'accounts': [
-            {
-                'type': 2,
-                'name': 'John Doe',
-                'initial': -533,
-                'interest': 0,
-            },
-        ]
-    },
-    {
-        'name': 'Turbopig911',
-        'accounts': [
-            {
-                'type': 0,
-                'name': 'Current',
-                'initial': 0,
-            },
-            {
-                'type': 1,
-                'name': 'ISA',
-                'initial': 644,
-                'interest': 0,
-            },
         ]
     }
 ]

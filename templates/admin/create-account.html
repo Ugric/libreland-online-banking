@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Create Account{% endblock %}
+{% block content %}
+        <h1 style="text-align:center;">Create Account</h1>
+        <div class="split"></div>
+        <div>
+                <form class="form" action="/admin/create-account" method="post">
+                        <select name="userID" id="userID" required="required" class="input" style="font-size: 1.5rem;">
+                                <option value="" disabled="disabled" selected="selected">Select User</option>
+                                {% for user in users %}
+                                        <option value="{{user.id}}">{{user.name}}</option>
+                                {% endfor %}
+                        </select>
+                        <label for="username">Type</label>
+                        <input type="number" class="input" id="type" name="type" required="required">
+                        <label for="name">Name</label>
+                        <input type="text" class="input" id="name" name="name" required="required">
+                        <label for="interest">Interest</label>
+                        <input type="text" class="input" id="interest" name="interest" required="required">
+                        <input type="submit" class="submit">
+                        <p class="error" style="font-size:20px;text-align:center;">{{error}}</p>
+                </form>
+        </div>
+{% endblock %}

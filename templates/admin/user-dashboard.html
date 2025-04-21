@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}{{opened_user[1]}}'s Dashboard{% endblock %}
+{% block content %}
+        <h1 style="text-align:center;">{{opened_user[1]}}'s Dashboard</h1>
+        <div class="split"></div>
+        <div>
+            <h1>Username: {{opened_user[1]}}</h1>
+            <h1>PIN: {{opened_user[2]}}</h1>
+            <div class="accounts">
+            {% for account in accounts %}
+                <a href="/admin/account/{{account.id}}">
+                    <h1 style="text-decoration: underline;">{{account.name}}</h1>
+                    <h2 style="word-break: keep-all;{% if account.balance > 0 %}color: var(--green);{% elif account.balance < 0 %}color: var(--red);{% endif %}">{{account.balance|cents_to_libros}}</h2>
+                </a>
+            {% endfor %}
+            </div>
+        </div>
+{% endblock %}

@@ -60,8 +60,11 @@ def logout():
     db.delete_token(token)
     db.commit()
     res = redirect('/login')
-    res.set_cookie('token', '', max_age=0)
+    res.delete_cookie('token')
     return res
+
+for rule in app.url_map.iter_rules():
+    print(rule)
 
 if bool(os.environ.get("DEBUG")):
     app.run(debug=True, use_reloader=False, host="0.0.0.0", port=5000)

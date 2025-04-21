@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Interest{% endblock %}
+{% block content %}
+        <h1 style="text-align:center;">Interest</h1>
+        <div class="split"></div>
+        <div>
+                <form class="form" action="/admin/account/{{accountID}}/interest/" method="post">
+                        <label for="amount">Interest</label>
+                        <input type="text" class="input" id="amount" name="amount" required="required">
+                        <input type="submit" class="submit">
+                        <p class="error" style="font-size:20px;text-align:center;">{{error}}</p>
+                </form>
+        </div>
+{% endblock %}

@@ -3,7 +3,7 @@ from database import db
 
 pay_someone_page = Blueprint('pay_someone', __name__)
 
-@pay_someone_page.route('/<path:account_id>/pay-someone')
+@pay_someone_page.route('/<string:account_id>/pay-someone')
 def account(account_id):
     user = db.get_user_by_token(request.cookies.get('token'))
     if not user:
@@ -20,13 +20,14 @@ def account(account_id):
         }
         for transation in db.get_transactions(account_id)]
     recipients = []
-    for user in filter(lambda recipient: recipient[0] != user[0], db.get_users()):
-        recipients_account = db.get_users_first_current_account(user[0])
+    for opened_user in filter(lambda recipient: recipient[0] != user[0], db.get_users()):
+        recipients_account = db.get_users_first_current_account(opened_user[0])
+        print(recipients_account)
         if not recipients_account:
             continue
         recipients.append({
             'id': recipients_account[0],
-            'name': user[1]
+            'name': opened_user[1]
         })
 
     return render_template('dashboard/account/pay_someone/pay_someone.html', user=user, account={
@@ -36,7 +37,7 @@ def account(account_id):
         'balance': balance
     }, transactions=reversed(transactions),recipients=recipients, error=request.args.get('error'))
 
-@pay_someone_page.route('/<path:account_id>/pay-someone', methods=['POST'])
+@pay_someone_page.route('/<string:account_id>/pay-someone', methods=['POST'])
 def account_post(account_id):
     user = db.get_user_by_token(request.cookies.get('token'))
     if not user:

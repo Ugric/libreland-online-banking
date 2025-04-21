@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Select User{% endblock %}
+{% block content %}
+    <h1 style="text-align:center;">Select User</h1>
+    <div class="split"></div>
+    <div>
+        <form class="form" action="/admin/user" method="post">
+            <select name="userID" id="userID" required="required" class="input" style="font-size: 1.5rem;">
+                <option value="" disabled="disabled" selected="selected">Select User</option>
+                {% for user in users %}
+                    <option value="{{user.id}}">{{user.name}}</option>
+                {% endfor %}
+            </select>
+            <input type="submit" class="submit">
+            <p class="error" style="font-size:20px;text-align:center;">{{error}}</p>
+        </form>
+    </div>
+{% endblock %}
