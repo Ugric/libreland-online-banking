@@ -352,7 +352,8 @@ class Database:
                 reference_from_account = f'Transfer to {to_user[1]}'
                 reference_to_account = f'Transfer from {from_user[1]}'
             else:
-                reference_from_account = reference_to_account = reference
+                reference_from_account = f'Transfer to {to_user[1]}: {reference}'
+                reference_to_account = f'Transfer from {from_user[1]}: {reference}'
             self.insert_transaction(from_account_id, -amount, reference_from_account)
             self.insert_transaction(to_account_id, amount, reference_to_account)
             return 0
