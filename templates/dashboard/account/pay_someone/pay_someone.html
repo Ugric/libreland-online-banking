@@ -3,6 +3,7 @@
 {% block content %}
     <h1 style="text-align:center;">Pay Someone</h1>
     <div class="split"></div>
+    <div class="ad_container"></div>
     <h2 style="text-align:center;">{{account.name}}</h2>
     <h3 style="text-align:center;">Balance:
         {{account.balance | cents_to_libros}}</h3>
@@ -25,7 +26,7 @@
             <span style="font-size:3rem;">₾</span>
         </div>
         <select name="recipient" id="recipient" required="required" class="input" style="font-size: 1.5rem;">
-            <option value="" disabled selected>Select recipient</option>
+            <option value="" disabled="disabled" selected="selected">Select recipient</option>
             {% for recipient in recipients %}
                 <option value="{{recipient.id}}">{{recipient.name}}</option>
             {% endfor %}

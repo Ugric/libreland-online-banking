@@ -1,17 +1,19 @@
 {% extends "base.html" %}
 {% block title %}Dashboard{% endblock %}
 {% block content %}
-        <h1 style="text-align:center;">My Dashboard</h1>
-        <div class="split"></div>
-        <div>
-            <h1>Hi, {{user[1]}}.</h1>
-            <div class="accounts">
+    <h1 style="text-align:center;">My Dashboard</h1>
+    <div class="split"></div>
+    <div>
+        <h1>Hi,
+            {{user[1]}}.</h1>
+        <div class="ad_container"></div>
+        <div class="accounts">
             {% for account in accounts %}
                 <a href="/dashboard/{{account.id}}">
                     <h1 style="text-decoration: underline;">{{account.name}}</h1>
                     <h2 style="word-break: keep-all;{% if account.balance > 0 %}color: var(--green);{% elif account.balance < 0 %}color: var(--red);{% endif %}">{{account.balance|cents_to_libros}}</h2>
                 </a>
             {% endfor %}
-            </div>
         </div>
+    </div>
 {% endblock %}
