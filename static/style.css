@@ -451,14 +451,14 @@ input:focus {
   background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
 }
 
-.ad_container {
+.pic_container {
   display: flex;
   flex-direction: row;
   justify-content: center;
   flex-wrap: wrap;
 }
 
-.ad {
+.pic {
   width: 100%;
   max-width: 250px;
   margin: 1rem;
