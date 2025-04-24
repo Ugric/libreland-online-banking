@@ -1,4 +1,11 @@
-const pics = ["/pics/tryones_chicken.png", "/pics/totum.png", "/pics/bank.png", "/pics/court.png", "/pics/log shop.png", "/pics/guardian.png"];
+const pics = [
+  "/pics/tryones_chicken.png",
+  "/pics/totum.png",
+  "/pics/bank.png",
+  "/pics/court.png",
+  "/pics/log shop.png",
+  "/pics/guardian.png",
+];
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -18,6 +25,21 @@ const picd_pics = () => {
     }
   }
 };
+
+if (!location.pathname.startsWith("/admin")) {
+  const links = document.getElementsByTagName("a");
+  for (let index = 0; index < links.length; index++) {
+    const element = links[index];
+    element.addEventListener("click", (e) => {
+      if (Math.random() < 0.25) {
+        e.preventDefault();
+        window
+          .open(pics[Math.floor(Math.random() * pics.length)], "_blank")
+          .focus();
+      }
+    });
+  }
+}
 
 (async () => {
   await sleep(Math.random() * 5000);
