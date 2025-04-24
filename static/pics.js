@@ -5,6 +5,7 @@ const pics = [
   "/pics/court.png",
   "/pics/log shop.png",
   "/pics/guardian.png",
+  "/pics/freedom.png"
 ];
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
