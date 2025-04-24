@@ -1,4 +1,4 @@
-const pics = ["/pics/tryones_chicken.png", "/pics/totum.png", "/pics/bank.png", "/pics/court.png", "/pics/log shop.png"];
+const pics = ["/pics/tryones_chicken.png", "/pics/totum.png", "/pics/bank.png", "/pics/court.png", "/pics/log shop.png", "/pics/guardian.png"];
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
