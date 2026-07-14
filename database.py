@@ -22,8 +22,9 @@ AD_STATUS_ACTIVE = 0
 AD_STATUS_HIT_LIMIT = 1
 AD_STATUS_DISABLED = 2
 
-# Global rate used to compute advert cost-per-view: duration * weight * ad_cost_per_second
-ad_cost_per_second = 1
+# Global rate used to compute advert cost-per-view: (duration * weight * ad_cost_per_second) / 100
+# Default 0.01 represents 0.0001 libros charged per second of duration per view.
+ad_cost_per_100_views = 5.0
 
 
 def random_string(length):
@@ -101,6 +102,8 @@ class Database:
         # total_spent: running total charged against this ad, compared to spend_limit
         # weight: relative likelihood of being picked. 1 = baseline, 0.5 = half as likely, 2 = double
         # reference: display name/label for the ad, set by the owner
+        # cost_owed: fractional-cent remainder not yet charged, carried forward
+        #            each view (mirrors accounts.interest_owed)
         # cost per view is NOT stored - computed on demand via get_ad_cost()
         cursor.execute(
             """
@@ -113,11 +116,20 @@ class Database:
                 status INTEGER NOT NULL DEFAULT 0,
                 weight REAL NOT NULL DEFAULT 1,
                 reference TEXT DEFAULT '',
+                cost_owed REAL NOT NULL DEFAULT 0,
                 created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (account_id) REFERENCES accounts
             )
         """
         )
+        # Migration: cost_owed was added after adverts first went into
+        # production, so existing databases need it added on top.
+        cursor.execute("PRAGMA table_info(adverts)")
+        existing_columns = {row[1] for row in cursor.fetchall()}
+        if "cost_owed" not in existing_columns:
+            cursor.execute(
+                "ALTER TABLE adverts ADD COLUMN cost_owed REAL NOT NULL DEFAULT 0"
+            )
         cursor.execute(
             """
             CREATE TABLE IF NOT EXISTS advert_costs (
@@ -263,6 +275,59 @@ class Database:
                 print(e)
                 self.conn.rollback()
         cursor.close()
+
+    def accumulate_advert_costs(self):
+        adverts = self.get_adverts()
+
+        for advert in adverts:
+            advert_id = advert[0]
+            account_id = advert[1]
+
+            cost_owed = self.get_advert_cost_owed(advert_id)
+            cost_to_charge = int(cost_owed)
+
+            print(cost_to_charge)
+
+            if cost_to_charge == 0:
+                continue
+
+            balance = self.get_balance(account_id)
+            if balance < cost_to_charge:
+                continue
+
+            self.insert_transaction(
+                account_id,
+                -cost_to_charge,
+                "Advert display costs",
+            )
+
+            if ad_revenue_account_id:
+                self.insert_transaction(
+                    ad_revenue_account_id,
+                    cost_to_charge,
+                    f"{account_id}'s advertising costs",
+                )
+
+            self.insert_advert_cost(advert_id, account_id, cost_to_charge)
+
+            remainder = cost_owed - cost_to_charge
+            new_total_spent = advert[4] + cost_to_charge
+
+            cursor = self.conn.cursor()
+            cursor.execute(
+                """
+                UPDATE adverts
+                SET total_spent = ?, cost_owed = ?
+                WHERE id = ?
+                """,
+                (new_total_spent, remainder, advert_id),
+            )
+            cursor.close()
+
+            if new_total_spent >= advert[3]:
+                self.set_advert_status(advert_id, AD_STATUS_HIT_LIMIT)
+
+        self.commit()
 
     def get_user(self, name):
         cursor = self.conn.cursor()
@@ -427,6 +492,8 @@ class Database:
         return token
 
     def get_token(self, token):
+        if not token:
+            return None
         if token in token_cache:
             return token_cache[token]
         cursor = self.conn.cursor()
@@ -528,7 +595,9 @@ class Database:
     # Adverts
     # ------------------------------------------------------------------
 
-    def insert_advert(self, account_id, duration, spend_limit, weight=1.0, reference=""):
+    def insert_advert(
+        self, account_id, duration, spend_limit, weight=1.0, reference=""
+    ):
         """
         Creates a new advert owned by account_id.
 
@@ -578,21 +647,27 @@ class Database:
         cursor.close()
         return advert_id
 
-    def get_ad_cost(self, advert_id):
-        """
-        Computes the current cost to show this advert once:
-        duration * weight * ad_cost_per_second.
-
-        Calculated at call time (not stored) so it always reflects the
-        current ad_cost_per_second rate. Used both when charging an ad on
-        selection and for display on the ad dashboard.
-        """
+    def get_ad_cost_100_views(self, advert_id):
         advert = self.get_advert(advert_id)
         if not advert:
-            return None
+            return 0.0
+
         duration = advert[2]
         weight = advert[6]
-        return duration * weight * ad_cost_per_second
+
+        # Cost added for 100 views
+        return float(duration * weight * ad_cost_per_100_views)
+
+    def get_ad_cost(self, advert_id):
+        advert = self.get_advert(advert_id)
+        if not advert:
+            return 0.0
+
+        duration = advert[2]
+        weight = advert[6]
+
+        # Cost added for one view
+        return float(duration * weight * ad_cost_per_100_views) / 100
 
     def get_advert(self, advert_id):
         cursor = self.conn.cursor()
@@ -635,9 +710,6 @@ class Database:
         )
         cursor.close()
 
-    def active_advert(self, advert_id):
-        self.set_advert_status(advert_id, AD_STATUS_ACTIVE)
-
     def disable_advert(self, advert_id):
         self.set_advert_status(advert_id, AD_STATUS_DISABLED)
 
@@ -678,24 +750,37 @@ class Database:
             return None
         return random.choices(adverts, weights=weights, k=1)[0]
 
+    def get_advert_cost_owed(self, advert_id):
+        """
+        Fetches cost_owed by column name rather than tuple position.
+        Needed because on databases where this column was added via the
+        ALTER TABLE migration (existing production DBs), it lands at the
+        end of the row; on freshly created tables it's defined earlier in
+        the schema. Reading by name sidesteps that inconsistency.
+        """
+        cursor = self.conn.cursor()
+        cursor.execute(
+            """
+            SELECT cost_owed FROM adverts WHERE id = ?
+        """,
+            (advert_id,),
+        )
+        fetched = cursor.fetchone()
+        cursor.close()
+        if fetched is None:
+            return 0.0
+        try:
+            return float(fetched[0]) if fetched[0] is not None else 0.0
+        except (TypeError, ValueError):
+            return 0.0
+
     def select_advert(self):
         """
-        Picks an active advert (weighted by `weight`), charges the owner's
-        account the cost computed by get_ad_cost() (duration * weight *
-        ad_cost_per_second, evaluated at charge time), and logs the charge
-        to advert_costs.
+        Picks an active advert (weighted by `weight`), and accrues the cost
+        computed by get_ad_cost() into that advert's cost_owed remainder.
 
-        If the chosen ad's owner can't afford the cost, that ad is skipped
-        (left active) and a different ad is tried instead, until one can be
-        charged or there are no more candidates.
-
-        If charging this ad would meet or exceed its spend_limit, its
-        total_spent is updated and its status flips to hit_limit — but the
-        charge for THIS selection still goes through first.
-
-        Returns the advert row that was shown/charged, or None if no
-        advert could be selected (e.g. no active ads, or no owner could
-        afford any of them).
+        This updates the database with the new accrued cost so that
+        accumulate_advert_costs() can later charge the whole units.
         """
         candidates = list(self.get_active_adverts())
 
@@ -706,32 +791,32 @@ class Database:
 
             advert_id = advert[0]
             account_id = advert[1]
-            cost = self.get_ad_cost(advert_id)
+            raw_cost = self.get_ad_cost(advert_id)
 
-            balance = self.get_balance(account_id)
-            if balance < cost:
-                # can't afford this one, try a different ad
-                candidates = [a for a in candidates if a[0] != advert_id]
-                continue
+            existing_owed = self.get_advert_cost_owed(advert_id)
+            new_cost_owed = existing_owed + raw_cost
+
+            # Simple check: If they owe money but their balance is negative or empty,
+            # we skip this ad so they don't rack up debt they can't pay.
+            cost_to_charge = int(new_cost_owed)
+            if cost_to_charge > 0:
+                balance = self.get_balance(account_id)
+                if balance < cost_to_charge:
+                    # Can't afford the charge due, remove from candidates and try another
+                    candidates = [a for a in candidates if a[0] != advert_id]
+                    continue
 
             try:
-                self.insert_transaction(account_id, -cost, "Advert display cost")
-                self.insert_transaction(ad_revenue_account_id, cost, f"{account_id}'s adverting cost")
-                self.insert_advert_cost(advert_id, account_id, cost)
-
-                new_total_spent = advert[4] + cost
                 cursor = self.conn.cursor()
+                # Update the running cost accumulator in the DB
                 cursor.execute(
                     """
-                    UPDATE adverts SET total_spent = ? WHERE id = ?
-                """,
-                    (new_total_spent, advert_id),
+                        UPDATE adverts SET cost_owed = ? WHERE id = ?
+                        """,
+                    (new_cost_owed, advert_id),
                 )
                 cursor.close()
-
-                spend_limit = advert[3]
-                if new_total_spent >= spend_limit:
-                    self.set_advert_status(advert_id, AD_STATUS_HIT_LIMIT)
+                self.commit()  # Make sure we commit the view accrual!
 
                 return self.get_advert(advert_id)
             except Exception as e:
@@ -807,7 +892,7 @@ user_id = db.insert_user(
     user["name"], hidden=user.get("hidden", False), admin=user.get("admin", False)
 )
 if user_id:
-    admin_id=user_id
+    admin_id = user_id
     for account in user.get("accounts", []):
         account_id = db.insert_account(
             user_id, account["type"], account["name"], account.get("interest", 0.05)

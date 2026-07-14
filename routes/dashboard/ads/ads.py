@@ -19,16 +19,17 @@ def ad_image_path(advert_id):
 def build_ad_dict(advert):
     """Turns a raw advert row into a template-friendly dict, injecting the
     computed cost_per_view since it isn't stored on the row itself."""
+    print(advert)
     return {
         'id': advert[0],
         'account_id': advert[1],
         'duration': advert[2],
         'spend_limit': advert[3],
-        'total_spent': advert[4],
+        'total_spent': advert[4]+advert[9],
         'status': advert[5],
         'weight': advert[6],
         'reference': advert[7],
-        'cost_per_view': db.get_ad_cost(advert[0]),
+        'cost_per_view': db.get_ad_cost_100_views(advert[0]),
     }
 
 

@@ -20,7 +20,7 @@
       <p style="{% if ad.status == 0 %}color: var(--green);{% elif ad.status == 1 %}color: var(--red);{% else %}color: gray;{% endif %}">
         {% if ad.status == 0 %}Active{% elif ad.status == 1 %}Limit Reached{% else %}Disabled{% endif %}
       </p>
-      <p>cost per view: {{ad.cost_per_view|cents_to_libros}}</p>
+      <p>cost per 100 views: {{ad.cost_per_view|cents_to_libros}}</p>
       <p>total spent:
         <span style="word-break: keep-all;{% if ad.total_spent >= ad.spend_limit %}color: var(--red);{% else %}color: var(--green);{% endif %}">
           {{ad.total_spent|cents_to_libros}}</span>

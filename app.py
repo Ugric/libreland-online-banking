@@ -16,6 +16,8 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 
 def interesting_thread():
     while True:
+        db.accumulate_interest()
+        db.accumulate_advert_costs()
         time_now = datetime.datetime.now()
         secondsUntilMidnight = datetime.timedelta(
             hours=23 - time_now.hour,
@@ -24,7 +26,6 @@ def interesting_thread():
         ).total_seconds()+1
         print(secondsUntilMidnight)
         time.sleep(secondsUntilMidnight)
-        db.accumulate_interest()
     
 threading.Thread(target=interesting_thread).start()
 

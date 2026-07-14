@@ -11,7 +11,7 @@
             style="{% if ad.status == 0 %}color: var(--green);{% elif ad.status == 1 %}color: var(--red);{% else %}color: gray;{% endif %}">
             {% if ad.status == 0 %}Active{% elif ad.status == 1 %}Limit Reached{% else %}Disabled{% endif %}</span>
     </h2>
-    <h3 style="text-align:center;">Cost Per View:
+    <h3 style="text-align:center;">Cost Per 100 Views:
         <span style="color: var(--red);">{{ad.cost_per_view|cents_to_libros}}</span>
         (duration × weight × rate)
     </h3>
