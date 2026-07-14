@@ -631,11 +631,12 @@ input:focus {
   justify-content: center;
   flex-wrap: wrap;
   gap: 1rem;
+  margin:1rem;
 }
 
 .pic {
   width: 100%;
-  max-width: 250px;
+  max-width: 400px;
   margin: 0;
   border-radius: var(--radius-md);
   border: 1px solid var(--border-subtle);
