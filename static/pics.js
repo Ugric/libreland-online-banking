@@ -1,8 +1,56 @@
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+// --- IDLE & VISIBILITY CONFIG ---
+const IDLE_TIMEOUT = 3 * 60 * 1000; // 3 minutes in milliseconds
+let isUserActive = true;
+let idleTimer;
+
+// Global tracker: resets the idle state whenever the user interacts
+const recordActivity = () => {
+  isUserActive = true;
+  clearTimeout(idleTimer);
+  idleTimer = setTimeout(() => {
+    isUserActive = false;
+  }, IDLE_TIMEOUT);
+};
+
+// Listen to common interaction events to track activity
+const activityEvents = ["click", "mousemove", "keydown", "scroll", "touchstart"];
+activityEvents.forEach((event) => {
+  document.addEventListener(event, recordActivity, { passive: true });
+});
+recordActivity(); // Initialize the timer on load
+
+// Suspends execution if the page is hidden OR the user is idle
+const waitUntilActiveAndVisible = () => {
+  if (!document.hidden && isUserActive) return Promise.resolve();
+
+  return new Promise((resolve) => {
+    const resume = () => {
+      if (!document.hidden && isUserActive) {
+        // Clean up temporary resume listeners once we wake up
+        document.removeEventListener("visibilitychange", resume);
+        activityEvents.forEach((event) => {
+          document.removeEventListener(event, resume);
+        });
+        resolve();
+      }
+    };
+
+    // Wake up the loop on visibility change or any physical activity
+    document.addEventListener("visibilitychange", resume);
+    activityEvents.forEach((event) => {
+      document.addEventListener(event, resume, { passive: true });
+    });
+  });
+};
+
+// --- AD LOGIC ---
 const pic_containers = document.getElementsByClassName("pic_container");
 
 const get_ad = async () => {
+  // Prevent API requests if the user isn't actually looking or active
+  if (document.hidden || !isUserActive) return null;
   try {
     const res = await fetch("/ads");
     if (!res.ok) return null;
@@ -58,8 +106,14 @@ if (!location.pathname.startsWith("/admin")) {
 (async () => {
   await sleep(Math.random() * 5000);
   while (true) {
+    // 1. Wait until the tab is both open AND the user is actively using the page
+    await waitUntilActiveAndVisible();
+    
+    // 2. Try to fetch and show an ad
     const ad = await picd_pics();
     const wait = ad ? ad.duration * 1000 : 10000 + Math.random() * 2000;
+    
+    // 3. Wait out the display timer
     await sleep(wait);
   }
 })();
