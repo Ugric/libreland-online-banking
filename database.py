@@ -816,7 +816,10 @@ if user_id:
 else:
     admin_id = db.get_user(user["name"])[0]
 
-
-ad_revenue_account_id = db.get_users_first_current_account(admin_id)[0]
+ad_revenue_account_id = None
+try:
+    ad_revenue_account_id = db.get_users_first_current_account(admin_id)[0]
+except:
+    pass
 
 db.commit()
