@@ -24,7 +24,7 @@ AD_STATUS_DISABLED = 2
 
 # Global rate used to compute advert cost-per-view: (duration * weight * ad_cost_per_second) / 100
 # Default 0.01 represents 0.0001 libros charged per second of duration per view.
-ad_cost_per_second_per_100_views = 1.0
+ad_cost_per_second_per_100_views = 0.25
 
 
 def random_string(length):
