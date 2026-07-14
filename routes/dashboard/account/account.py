@@ -23,7 +23,7 @@ def account(account_id):
     interest_rate = account[5]
     interest_accumulated = int(db.get_interest_accumulated(account_id))
     interest_Since_last = db.calculate_interest(account_id)
-    return render_template('dashboard/account/account.html', user=user, interest={
+    return render_template('dashboard/account/account.jinja', user=user, interest={
         'rate': interest_rate,
         'accumulated': interest_accumulated,
         'since_last': interest_Since_last

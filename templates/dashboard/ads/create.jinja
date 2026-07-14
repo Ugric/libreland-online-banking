@@ -1,0 +1,55 @@
+{% extends "base.jinja" %}
+{% block title %}New Ad{% endblock %}
+{% block content %}
+    <h1 style="text-align:center;">New Ad</h1>
+    <div class="split"></div>
+    <div class="pic_container"></div>
+    <form class="form" action="/dashboard/ads/create" method="post" enctype="multipart/form-data">
+        <select name="account" id="account" required="required" class="input" style="font-size: 1.5rem;">
+            <option value="" disabled="disabled" selected="selected">Pay from account</option>
+            {% for account in accounts %}
+                <option value="{{account.id}}">{{account.name}} ({{account.balance|cents_to_libros}})</option>
+            {% endfor %}
+        </select>
+        <input type="file" name="image" id="image" accept="image/*" required="required" class="input" style="font-size: 1.5rem;">
+        <div class="container">
+            <input type="number" id="duration" name="duration" value="10" step="1" min="1" required="required" style="
+        width: 100%;
+    background-color: transparent;
+    color: white;
+    font-size:3rem;
+    border: none;
+">
+            <span style="font-size:1.5rem;">seconds shown</span>
+        </div>
+        <div class="container">
+            <input type="number" id="weight" name="weight" value="1" step="0.1" min="0.1" required="required" style="
+        width: 100%;
+    background-color: transparent;
+    color: white;
+    font-size:3rem;
+    border: none;
+">
+            <span style="font-size:1.5rem;">weight</span>
+        </div>
+        <p style="text-align:center;color:gray;">Weight changes how often your ad is picked relative to others (1 = normal, 2 = double chance, 0.5 = half chance). It also affects your cost per view.</p>
+        <div class="container">
+            <input type="number" id="spend_limit" name="spend_limit" value="0.00" step="0.01" min="0.01" required="required" onchange="
+        event.target.value = isNaN(event.target.valueAsNumber)?'0.00':Math.max(0.01,event.target.valueAsNumber).toFixed(2);
+        " style="
+        width: 100%;
+    background-color: transparent;
+    color: white;
+    font-size:3rem;
+    border: none;
+">
+            <span style="font-size:3rem;">₾</span>
+        </div>
+        <p style="text-align:center;color:gray;">Spend limit: once total spend reaches this, the ad pauses until you top it up.</p>
+        <input type="text" name="reference" placeholder="Advert name / reference" class="input" style="font-size: 1.5rem;">
+        <button type="submit" class="submit">Create Ad</button>
+        {% if error %}
+            <p style="color:red;text-align:center;">{{error}}</p>
+        {% endif %}
+    </form>
+{% endblock %}

@@ -30,7 +30,7 @@ def account(account_id):
             'name': opened_user[1]
         })
 
-    return render_template('dashboard/account/pay_someone/pay_someone.html', user=user, account={
+    return render_template('dashboard/account/pay_someone/pay_someone.jinja', user=user, account={
         'id': account[0],
         'type': account[1],
         'name': account[2],

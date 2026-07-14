@@ -8,7 +8,7 @@ def interest(account_id):
     account = db.get_account(account_id)
     if not account:
         return redirect('/admin/account')
-    return render_template('admin/account/interest.html', user=request.user, accountID=account[0])
+    return render_template('admin/account/interest.jinja', user=request.user, accountID=account[0])
 
 @interest_page.route('/<string:account_id>/interest/', methods=['POST'])
 def interest_post(account_id):

@@ -1,0 +1,34 @@
+{% extends "base.jinja" %}
+{% block title %}Adverts{% endblock %}
+{% block content %}
+<h1 style="text-align:center;">My Adverts</h1>
+<div class="split"></div>
+<div>
+  <h1>Hi,
+    {{user[1]}}.</h1>
+  <div class="pic_container"></div>
+  <a class="link_button" href="/dashboard/ads/create" style="
+                text-align: center;
+                margin: 1rem auto;
+                width: 150px;
+                display: block;
+            ">New Ad</a>
+  <div class="accounts">
+    {% for ad in ads %}
+    <a href="/dashboard/ads/{{ad.id}}">
+      <img style="text-decoration: underline;" src="/ads/{{ad.id}}" width="100%">
+      <p style="{% if ad.status == 0 %}color: var(--green);{% elif ad.status == 1 %}color: var(--red);{% else %}color: gray;{% endif %}">
+        {% if ad.status == 0 %}Active{% elif ad.status == 1 %}Limit Reached{% else %}Disabled{% endif %}
+      </p>
+      <p>cost per view: {{ad.cost_per_view|cents_to_libros}}</p>
+      <p>total spent:
+        <span style="word-break: keep-all;{% if ad.total_spent >= ad.spend_limit %}color: var(--red);{% else %}color: var(--green);{% endif %}">
+          {{ad.total_spent|cents_to_libros}}</span>
+        / {{ad.spend_limit|cents_to_libros}}
+      </p>
+      <p>weight: {{ad.weight}}</p>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

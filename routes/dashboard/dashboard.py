@@ -1,6 +1,7 @@
 from flask import render_template, Blueprint, request, redirect
 from database import db
 from .account.account import account_page
+from .ads.ads import ads_page
 
 dashboard_page = Blueprint('dashboard', __name__, url_prefix='/dashboard')
 
@@ -20,6 +21,7 @@ def login():
             'name': account[2],
             'balance': balance
         })
-    return render_template('dashboard/dashboard.html', user=request.user, accounts=accounts_with_balance)
+    return render_template('dashboard/dashboard.jinja', user=request.user, accounts=accounts_with_balance)
 
 dashboard_page.register_blueprint(account_page)
+dashboard_page.register_blueprint(ads_page)

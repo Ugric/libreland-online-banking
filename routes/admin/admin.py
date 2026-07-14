@@ -15,7 +15,7 @@ def check_admin():
 
 @admin_page.route('/')
 def admin():
-    return render_template('admin/admin.html', user=request.user)
+    return render_template('admin/admin.jinja', user=request.user)
 
 admin_page.register_blueprint(accounts_page)
 admin_page.register_blueprint(create_user_page)

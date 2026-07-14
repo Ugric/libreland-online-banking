@@ -2,6 +2,7 @@ from flask import Flask, request, redirect
 from database import db
 from routes.home import home_page
 from routes.login.login import login_page
+from routes.ads.ads import ads_page
 from routes.dashboard.dashboard import dashboard_page
 from routes.admin.admin import admin_page
 from waitress import serve
@@ -55,6 +56,8 @@ def before_request():
 app.register_blueprint(home_page)
 
 app.register_blueprint(login_page)
+
+app.register_blueprint(ads_page)
 
 app.register_blueprint(dashboard_page)
 

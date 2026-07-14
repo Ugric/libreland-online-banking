@@ -9,7 +9,7 @@ def accounts():
     users_output = []
     for user in users:
         users_output.append({'name': user[1], 'id': user[0]})
-    return render_template('admin/create-account.html', user=request.user, users=users_output)
+    return render_template('admin/create-account.jinja', user=request.user, users=users_output)
 
 @create_account_page.route('/', methods=['POST'])
 def search_account():
@@ -24,7 +24,7 @@ def search_account():
         users_output = []
         for user in users:
             users_output.append({'name': user[1], 'id': user[0]})
-        return render_template('admin/create-account.html', user=request.user, error='Account could not be created', users=users_output)
+        return render_template('admin/create-account.jinja', user=request.user, error='Account could not be created', users=users_output)
     db.insert_transaction(accountID, 0, 'Initial Balance')
     db.commit()
     return redirect(f'/admin/account/{accountID}')

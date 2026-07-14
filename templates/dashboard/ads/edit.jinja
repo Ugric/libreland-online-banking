@@ -1,0 +1,104 @@
+{% extends "base.jinja" %}
+{% block title %}Edit Ad{% endblock %}
+{% block content %}
+<h1 style="text-align:center;">{{ad.reference or "Advert"}}</h1>
+<div class="split"></div>
+<div class="pic_container"></div>
+<div>
+    <img src="/ads/{{ad.id}}" style="display:block;margin:0 auto;max-width:100%;">
+    <h2 style="text-align:center;">Status:
+        <span
+            style="{% if ad.status == 0 %}color: var(--green);{% elif ad.status == 1 %}color: var(--red);{% else %}color: gray;{% endif %}">
+            {% if ad.status == 0 %}Active{% elif ad.status == 1 %}Limit Reached{% else %}Disabled{% endif %}</span>
+    </h2>
+    <h3 style="text-align:center;">Cost Per View:
+        <span style="color: var(--red);">{{ad.cost_per_view|cents_to_libros}}</span>
+        (duration × weight × rate)
+    </h3>
+    <h3 style="text-align:center;">Total Spent:
+        <span
+            style="word-break: keep-all;{% if ad.total_spent >= ad.spend_limit %}color: var(--red);{% else %}color: var(--green);{% endif %}">
+            {{ad.total_spent|cents_to_libros}}</span>
+        /
+        {{ad.spend_limit|cents_to_libros}}
+    </h3>
+    <h3 style="text-align:center;">Weight:
+        <span style="color: var(--green);">{{ad.weight}}</span>
+    </h3>
+    <h3 style="text-align:center;">Duration:
+        <span>{{ad.duration}}s</span>
+    </h3>
+
+    {% if ad.status == 1 %}
+    <form class="form" action="/dashboard/ads/{{ad.id}}/top-up" method="post">
+        <div class="container">
+            <input type="number" id="spend_limit" name="spend_limit" value="{{(ad.spend_limit/100)|round(2)}}"
+                step="0.01" min="{{(ad.total_spent/100)|round(2)}}" required="required" onchange="
+        if (event.target.valueAsNumber < {{ad.total_spent/100}}) {
+            event.target.valueAsNumber = {{ad.total_spent/100}};
+        };
+        event.target.value = isNaN(event.target.valueAsNumber)?'0.00':event.target.valueAsNumber.toFixed(2);
+        " style="
+        width: 100%;
+    background-color: transparent;
+    color: white;
+    font-size:3rem;
+    border: none;
+">
+            <span style="font-size:3rem;">₾</span>
+        </div>
+        <p style="text-align:center;color:gray;">Raise the spend limit above your current spend to reactivate this ad.
+        </p>
+        <button type="submit" class="submit">Top Up &amp; Reactivate</button>
+    </form>
+    {% endif %}
+
+    <form class="form" action="/dashboard/ads/{{ad.id}}/edit" method="post">
+        <div class="container">
+            <input type="number" id="weight" name="weight" value="{{ad.weight}}" step="0.1" min="0.1"
+                required="required" style="
+        width: 100%;
+    background-color: transparent;
+    color: white;
+    font-size:3rem;
+    border: none;
+">
+            <span style="font-size:1.5rem;">weight</span>
+        </div>
+        <div class="container">
+            <input type="number" id="duration" name="duration" value="{{ad.duration}}" step="1" min="1"
+                required="required" style="
+        width: 100%;
+    background-color: transparent;
+    color: white;
+    font-size:3rem;
+    border: none;
+">
+            <span style="font-size:1.5rem;">seconds shown</span>
+        </div>
+        <input type="text" name="reference" value="{{ad.reference}}" placeholder="Advert name / reference" class="input"
+            style="font-size: 1.5rem;">
+        <button type="submit" class="submit">Save Changes</button>
+        {% if error %}
+        <p style="color:red;text-align:center;">{{error}}</p>
+        {% endif %}
+    </form>
+
+    {% if ad.status != 2 %}
+    <form class="form" action="/dashboard/ads/{{ad.id}}/disable" method="post">
+        <button type="submit" class="submit" style="background-color: var(--red);">Disable Ad</button>
+    </form>
+    {% endif %}
+
+    <h2 style="text-align:center;">Charges</h2>
+    <div class="transactions">
+        {% for charge in charges %}
+        <div>
+            <h3>{{charge.date}}</h3>
+            <h2 style="word-break: keep-all;color: var(--red);">
+                -{{charge.amount|cents_to_libros}}</h2>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

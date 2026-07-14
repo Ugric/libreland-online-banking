@@ -10,7 +10,7 @@ def check_login():
 
 @login_page.route('/')
 def login():
-    return render_template('login/login.html')
+    return render_template('login/login.jinja')
 
 @login_page.route('/', methods=['POST'])
 def login_post():
@@ -18,7 +18,7 @@ def login_post():
     PIN = request.form.get("pin")
     login = db.login(username, PIN)
     if not login:
-        return render_template('login/login.html', error='Invalid credentials')
+        return render_template('login/login.jinja', error='Invalid credentials')
     token = db.insert_token(login[0])
     db.commit()
     res = redirect('/dashboard')

@@ -9,7 +9,7 @@ def users():
     users_output = []
     for user in users:
         users_output.append({'name': user[1], 'id': user[0]})
-    return render_template('admin/user.html', user=request.user, users=users_output)
+    return render_template('admin/user.jinja', user=request.user, users=users_output)
 
 @users_dashboard_page.route('/', methods=['POST'])
 def search_users():
@@ -20,7 +20,7 @@ def search_users():
         users_output = []
         for user in users:
             users_output.append({'name': user[1], 'id': user[0]})
-        return render_template('admin/user.html', user=request.user, users=users, error='User was not found')
+        return render_template('admin/user.jinja', user=request.user, users=users, error='User was not found')
     db.commit()
     return redirect(f'/admin/user/{userID}')
 
@@ -38,4 +38,4 @@ def users_dashboard(userID):
             'name': account[2],
             'balance': balance
         })
-    return render_template('admin/user-dashboard.html', user=request.user, opened_user=user, accounts=accounts_with_balance)
+    return render_template('admin/user-dashboard.jinja', user=request.user, opened_user=user, accounts=accounts_with_balance)

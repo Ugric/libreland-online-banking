@@ -7,14 +7,14 @@ accounts_page = Blueprint('accounts', __name__, url_prefix='/account')
 
 @accounts_page.route('/')
 def accounts():
-    return render_template('admin/account/accounts.html', user=request.user)
+    return render_template('admin/account/accounts.jinja', user=request.user)
 
 @accounts_page.route('/', methods=['POST'])
 def search_account():
     account_ID = request.form.get('account_ID')
     account = db.get_account(account_ID)
     if not account:
-        return render_template('admin/account/accounts.html', user=request.user, error='Account not found')
+        return render_template('admin/account/accounts.jinja', user=request.user, error='Account not found')
     return redirect(f'/admin/account/{account_ID}')
 
 @accounts_page.route('/<string:account_id>/')
@@ -33,7 +33,7 @@ def account(account_id):
     interest_rate = account[5]
     interest_accumulated = int(db.get_interest_accumulated(account_id))
     interest_Since_last = db.calculate_interest(account_id)
-    return render_template('admin/account/account.html', user=request.user, account={
+    return render_template('admin/account/account.jinja', user=request.user, account={
         'id': account[0],
         'type': account[1],
         'name': account[2],

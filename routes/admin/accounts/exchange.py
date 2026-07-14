@@ -8,7 +8,7 @@ def exchange(account_id):
     account = db.get_account(account_id)
     if not account:
         return redirect('/admin/account')
-    return render_template('admin/account/exchange.html', user=request.user, accountID=account[0])
+    return render_template('admin/account/exchange.jinja', user=request.user, accountID=account[0])
 
 @exchange_page.route('/<string:account_id>/exchange/', methods=['POST'])
 def exchange_post(account_id):

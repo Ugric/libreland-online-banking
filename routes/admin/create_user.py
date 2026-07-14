@@ -5,7 +5,7 @@ create_user_page = Blueprint('create-user', __name__, url_prefix='/create-user')
 
 @create_user_page.route('/')
 def accounts():
-    return render_template('admin/create-user.html', user=request.user)
+    return render_template('admin/create-user.jinja', user=request.user)
 
 @create_user_page.route('/', methods=['POST'])
 def search_account():
@@ -14,6 +14,6 @@ def search_account():
     admin = bool(request.form.get('admin'))
     userID = db.insert_user(username, hidden=hidden, admin=admin)
     if not userID:
-        return render_template('admin/create-user.html', user=request.user, error='User could not be created')
+        return render_template('admin/create-user.jinja', user=request.user, error='User could not be created')
     db.commit()
     return redirect(f'/admin/user/{userID}')

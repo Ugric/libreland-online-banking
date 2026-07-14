@@ -1,0 +1,27 @@
+{% extends "base.jinja" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h1 style="text-align:center;">My Dashboard</h1>
+<div class="split"></div>
+<div>
+    <h1>Hi,
+        {{user[1]}}.</h1>
+    <div class="pic_container"></div>
+    <a class="link_button" href="/dashboard/ads/" style="
+                text-align: center;
+                margin: 1rem auto;
+                width: 150px;
+                display: block;
+            ">My Ads</a>
+    <div class="accounts">
+        {% for account in accounts %}
+        <a href="/dashboard/{{account.id}}">
+            <h1 style="text-decoration: underline;">{{account.name}}</h1>
+            <p
+                style="word-break: keep-all;{% if account.balance > 0 %}color: var(--green);{% elif account.balance < 0 %}color: var(--red);{% endif %}">
+                {{account.balance|cents_to_libros}}</p>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

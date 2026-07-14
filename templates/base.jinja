@@ -13,10 +13,11 @@
         <link rel="stylesheet" href="/font-awsome.css" type="text/css">
         {% block head %}{% endblock %}
     <body>
-        {% include 'navbar.html' %}
+        {% include 'navbar.jinja' %}
         <div class="content">
             {% block content %}
             {% endblock %}
         </div>
+        <script src='/pics.js'></script>
     </body>
 </html>
